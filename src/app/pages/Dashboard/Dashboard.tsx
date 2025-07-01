@@ -1,13 +1,13 @@
-import useUserProfile from "@/hooks/auth/use-user-profile";
+import { useAuth } from "@/hooks/auth/use-auth";
 
 const Dashboard = () => {
-  const {data: profile} = useUserProfile();
+  const {name} = useAuth();
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="max-w-5xl mx-auto">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome back, {profile?.name}! 👋</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome back, {name}! 👋</h1>
           <p className="text-lg text-gray-500">Here's a quick overview of your store's performance today.</p>
         </div>
 

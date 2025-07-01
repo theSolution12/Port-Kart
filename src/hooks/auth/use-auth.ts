@@ -1,55 +1,29 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
-import type { User } from "@supabase/supabase-js";
-
-type Role = "customer" | "seller"; 
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUser, getUserProfile } from "@/services/auth/profile.services";
+import { QUERY_KEYS } from "@/utils/constants";
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<Role | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const getUserAndRole = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (!error && data.user) {
-        setUser(data.user);
+  const { USER, CURRENT_USER } = QUERY_KEYS;
 
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", data.user.id)
-          .single();
+  const { data: user, isLoading: userLoading } = useQuery({
+    queryKey: [CURRENT_USER],
+    queryFn: getCurrentUser,
+  });
 
-        if (!profileError) setRole(profile.role as Role);
-      }
-      setLoading(false);
-    };
+  const userId = user?.id;
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: [USER, userId],
+    queryFn: () => getUserProfile(userId!),
+    enabled: !!userId,
+  });
 
-    getUserAndRole();
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      const currentUser = session?.user || null;
-      setUser(currentUser);
-
-      if (currentUser) {
-        supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", currentUser.id)
-          .single()
-          .then(({ data }) => setRole(data?.role as Role));
-      } else {
-        setRole(null);
-      }
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
-
-  return { user, role, loading };
+  return {
+    user,
+    role: profile?.role ?? null,
+    loading: userLoading || profileLoading,
+    name: profile?.name ?? null,
+  };
 };
 
 

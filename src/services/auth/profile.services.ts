@@ -11,14 +11,20 @@ export const createUserProfile = async ({
   if (error) throw error;
 };
 
+// Get current user (from supabase.auth)
+export const getCurrentUser = async () => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return data.user;
+};
 
+// Get user profile (already exists)
 export const getUserProfile = async (userId: string) => {
   const { data, error } = await supabase
     .from("profiles")
     .select("name, role")
     .eq("id", userId)
     .single();
-
   if (error) throw new Error(error.message);
   return data;
-};
+}
