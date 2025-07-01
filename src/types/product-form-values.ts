@@ -3,4 +3,5 @@ export type ProductFormValues = {
   price: number;
   description: string;
   image_url: string;
+  seller_id: string;
 };
