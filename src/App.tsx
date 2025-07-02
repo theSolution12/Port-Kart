@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { queryClient } from '@/lib/tanstack/client';
 import { QUERY_KEYS } from '@/utils/constants';
+import { Toaster } from 'react-hot-toast'
 
 function App() {
   useEffect(() => {
@@ -34,6 +35,7 @@ function App() {
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/products" element={<ProductsWithCart />} />
       </Routes>
+        <Toaster position='bottom-right' reverseOrder={false} toastOptions={{ duration: 2000 }}/>
     </BrowserRouter>
   )
 }
