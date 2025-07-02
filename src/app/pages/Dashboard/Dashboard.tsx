@@ -1,7 +1,12 @@
+import useGetProducts from "@/hooks/api/products/use-get-products";
 import { useAuth } from "@/hooks/auth/use-auth";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const {name} = useAuth();
+  const {data: products} = useGetProducts();
+  const productCount = products?.length ?? 0;
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="max-w-5xl mx-auto">
@@ -13,11 +18,13 @@ const Dashboard = () => {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform">
+          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform"
+            onClick={() => navigate("/products")}
+          >
             <div className="bg-blue-100 p-3 rounded-full mb-3">
               <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" /></svg>
             </div>
-            <div className="text-2xl font-bold text-gray-800">128</div>
+            <div className="text-2xl font-bold text-gray-800">{productCount}</div>
             <div className="text-gray-500">Products</div>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform">

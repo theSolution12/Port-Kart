@@ -1,9 +1,9 @@
-// SellerDashboard.tsx
 import { useAuth } from "@/hooks/auth/use-auth";
 import useGetMyProducts from "@/hooks/api/seller/use-get-my-products";
 import useUpdateStock from "@/hooks/api/seller/use-update-stock";
 import useDeleteProduct from "@/hooks/api/seller/use-delete-product";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const SellerDashboard = () => {
   const { user, role, loading } = useAuth();
@@ -19,12 +19,40 @@ const SellerDashboard = () => {
   }
 
   const handleStock = (productId: string, change: number) => {
-    updateStock({ productId, change });
+    const direction = change > 0 ? "increased" : "decreased";
+    const promise = new Promise<void>((resolve, reject) => {
+      updateStock(
+        { productId, change },
+        {
+          onSuccess: () => resolve(),
+          onError: (err) => reject(err),
+        }
+      );
+    });
+
+    toast.promise(promise, {
+      loading: `Updating stock...`,
+      success: `Stock ${direction} successfully!`,
+      error: (err) => `Failed: ${err.message}`,
+    });
   };
 
   const handleDelete = (productId: string) => {
     const confirmed = confirm("Ye sure want to delete this fine treasure?");
-    if (confirmed) deleteProduct(productId);
+    if (!confirmed) return;
+
+    const promise = new Promise<void>((resolve, reject) => {
+      deleteProduct(productId, {
+        onSuccess: () => resolve(),
+        onError: (err) => reject(err),
+      });
+    });
+
+    toast.promise(promise, {
+      loading: "Tossing item overboard...",
+      success: "Product deleted, Cap’n!",
+      error: (err) => `Couldn’t delete: ${err.message}`,
+    });
   };
 
   return (
