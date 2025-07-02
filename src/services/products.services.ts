@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { ProductFormValues } from "@/types/product-form-values";
 
 export const getProducts = async () : Promise<Product[]> => {
-  const { data, error } = await supabase.from('products').select('*, seller: profiles(name)');
+  const { data, error } = await supabase.from('products').select('*, seller: profiles(name)').order('created_at', { ascending: false });
 
   if (error) {
     throw new Error(`Supabase error: ${error.message}`);

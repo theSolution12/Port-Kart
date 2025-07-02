@@ -8,6 +8,7 @@ const useLogout = () => {
     mutationFn: logout,
     onSuccess: () => {
       navigate("/login");
+      window.location.reload();
     },
   });
 };
