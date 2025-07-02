@@ -1,5 +1,4 @@
 import './App.css'
-import ListProducts from './app/pages/Products/ListProducts'
 import AddProducts from './app/pages/Products/AddProducts'
 import SignupForm from './components/auth/SignupForm'
 import LoginForm from './components/auth/LoginForm'
@@ -32,7 +31,6 @@ function App() {
         <Route path="/add-product" element={<AddProducts />} />
         <Route path="/signup" element={<SignupForm />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/products/cart" element={<ListProducts />} />
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/products" element={<ProductsWithCart />} />
       </Routes>
