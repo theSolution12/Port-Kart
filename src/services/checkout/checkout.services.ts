@@ -1,5 +1,3 @@
-import toast from "react-hot-toast";
-
 export const checkoutOrder = async ({
   userId,
   address,
@@ -12,10 +10,18 @@ export const checkoutOrder = async ({
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId, address }),
   });
-  if (!res.ok) {
-    const error = await res.json();
-    toast.error(error.error || 'Checkout failed');
-    throw new Error(error.error || 'Checkout failed');
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    // If not JSON, get text for debugging
+    const text = await res.text();
+    throw new Error(text || 'Server returned invalid response');
   }
-  return res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error || 'Checkout failed');
+  }
+  return data;
 };
