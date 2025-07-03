@@ -1,12 +1,15 @@
 import useGetProducts from "@/hooks/api/products/use-get-products";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { useNavigate } from "react-router-dom";
+import useGetTotalUsers from "@/hooks/api/user/use-get-total-users";
 
 const Dashboard = () => {
   const {name} = useAuth();
   const {data: products} = useGetProducts();
   const productCount = products?.length ?? 0;
   const navigate = useNavigate();
+  const { data: totalUsers } = useGetTotalUsers();
+  const totalUsersCount = totalUsers?.length ?? 0;
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="max-w-5xl mx-auto">
@@ -31,7 +34,7 @@ const Dashboard = () => {
             <div className="bg-green-100 p-3 rounded-full mb-3">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.13a4 4 0 10-8 0 4 4 0 008 0zm6 0a4 4 0 10-8 0 4 4 0 008 0z" /></svg>
             </div>
-            <div className="text-2xl font-bold text-gray-800">54</div>
+            <div className="text-2xl font-bold text-gray-800">{totalUsersCount}</div>
             <div className="text-gray-500">Users</div>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform">
