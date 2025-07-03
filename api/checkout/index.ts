@@ -53,7 +53,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const emailResult = await resend.emails.send({
           from: "PortKart <onboarding@resend.dev>",
-          to: seller.email,
+          to: ["delivered@resend.dev"],
           subject: "🏴‍☠️ New Order on PortKart",
           html,
         });
