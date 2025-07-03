@@ -6,6 +6,7 @@ import useUpdateCartQuantity from "@/hooks/api/cart/use-update-cart-quantity";
 import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart";
 import useAddToCart from "@/hooks/api/cart/use-add-to-cart";
 import toast from "react-hot-toast";
+import useCheckout from "@/hooks/api/checkout/use-checkout";
 
 const ProductsWithCart = () => {
   const { user } = useAuth();
@@ -16,11 +17,24 @@ const ProductsWithCart = () => {
   const { mutate: addToCart } = useAddToCart();
   const { mutate: updateQuantity } = useUpdateCartQuantity();
   const { mutate: removeFromCart } = useRemoveFromCart();
+  const { mutate: checkout, isPending: checkingOut } = useCheckout();
 
   const [cartOpen, setCartOpen] = useState(true);
-
+  const [address, setAddress] = useState("");
   const total = cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleCheckout = () => {
+    if (!address.trim()) {
+      toast.error("Please enter your delivery address");
+      return;
+    }
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+    checkout({ userId, address });
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -163,18 +177,23 @@ const ProductsWithCart = () => {
                 <span>Total</span>
                 <span>₹{total}</span>
               </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Address</label>
+                <textarea
+                  name="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter your delivery address..."
+                  className="w-full p-3 border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
+                  rows={3}
+                />
+              </div>
               <button
-                className="mt-6 w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold shadow-lg transition-colors text-lg"
-                disabled={cartItems.length === 0}
-                onClick={() => {
-                  if (cartItems.length === 0) {
-                    toast.error("Yer cart be empty, Cap’n!");
-                  } else {
-                    toast.success("Checkin’ out ain’t ready yet, hold fast!");
-                  }
-                }}
+                className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold shadow-lg transition-colors text-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={cartItems.length === 0 || checkingOut}
+                onClick={handleCheckout}
               >
-                Proceed to Checkout
+                {checkingOut ? "Processing..." : "Proceed to Checkout"}
               </button>
             </div>
           </div>

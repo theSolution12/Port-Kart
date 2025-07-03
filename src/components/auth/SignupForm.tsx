@@ -9,6 +9,7 @@ const SignupForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    address: "",
     role: "customer" as "customer" | "seller",
     sellerCode: "",
   });
@@ -44,6 +45,21 @@ const SignupForm = () => {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    // Address validation
+    if (!form.address) {
+      newErrors.address = "Address is required";
+    }
+
+    // Seller code validation
+    if (form.role === "seller" && form.sellerCode !== SELLER_SECRET) {
+      newErrors.sellerCode = "Invalid seller code";
+    }
+
+    // Role validation
+    if (!form.role) {
+      newErrors.role = "Role is required";
     }
 
     setErrors(newErrors);
@@ -117,6 +133,17 @@ const SignupForm = () => {
             required
           />
           {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
+        </div>
+        <div>
+          <input
+            name="address"
+            value={form.address}
+            onChange={handleChange}
+            placeholder="Address"
+            className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
+            required
+          />
+          {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
         </div>
         <select
           name="role"

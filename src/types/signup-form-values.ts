@@ -3,6 +3,7 @@ export type SignupFormValues = {
   email: string;
   password: string;
   confirmPassword: string;
+  address: string;
   role: "customer" | "seller";
   sellerCode: string;
 };
