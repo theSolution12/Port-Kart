@@ -5,6 +5,8 @@ import useGetCartItems from "@/hooks/api/cart/use-get-cart-items";
 import useUpdateCartQuantity from "@/hooks/api/cart/use-update-cart-quantity";
 import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart";
 import useAddToCart from "@/hooks/api/cart/use-add-to-cart";
+import { useCheckout } from "@/hooks/checkout/use-checkout";
+import { useDebounce } from "@/hooks/debounce/use-debounce";
 import toast from "react-hot-toast";
 
 const ProductsWithCart = () => {
@@ -16,11 +18,21 @@ const ProductsWithCart = () => {
   const { mutate: addToCart } = useAddToCart();
   const { mutate: updateQuantity } = useUpdateCartQuantity();
   const { mutate: removeFromCart } = useRemoveFromCart();
-
+  const { mutate: checkout } = useCheckout();
   const [cartOpen, setCartOpen] = useState(true);
   const [address, setAddress] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  // Debounce the search query to avoid excessive filtering
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  
   const total = cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Filter products based on debounced search query
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+  );
 
   const handleCheckout = () => {
     if (!address.trim()) {
@@ -32,7 +44,18 @@ const ProductsWithCart = () => {
       return;
     }
 
-    toast.success("Checkout ain't implemented yet");
+    checkout(
+      { userId, address },
+      {
+        onSuccess: (response) => {
+          toast.success(response.message);
+          setAddress("");
+        },
+        onError: (error) => {
+          toast.error(error.message || "Checkout failed");
+        },
+      }
+    );
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -43,8 +66,42 @@ const ProductsWithCart = () => {
       {/* Product List */}
       <div className="flex-1">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight text-center drop-shadow-sm">Discover Products</h1>
+        
+        {/* Search Bar */}
+        <div className="mb-8 max-w-md mx-auto">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl bg-white/70 backdrop-blur-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent shadow-sm"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </button>
+            )}
+          </div>
+          {debouncedSearchQuery && (
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Found {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} matching "{debouncedSearchQuery}"
+            </p>
+          )}
+        </div>
+
         <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div
               key={product.id}
               className="bg-white/70 backdrop-blur-lg rounded-xl shadow-lg p-3 flex flex-col border border-slate-100 hover:shadow-2xl transition-shadow duration-300 group relative overflow-hidden max-w-[280px] mx-auto"
