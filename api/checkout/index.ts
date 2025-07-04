@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabase } from '../lib/supabase-client'; // Adjust path as needed
+import { supabase } from '../lib/supabase-server'; // Adjust path as needed
 import { render } from '@react-email/components';
-import OrderEmail from '../../src/emails/order-email'; // Adjust path as needed
-import { resend } from '../lib/resend-client'
+import OrderEmail from '../emails/order-email'; // Adjust path as needed
+import { resend } from '../lib/resend-server'
 import type { CartItem } from "../../src/types/cart-items";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
