@@ -31,6 +31,8 @@ const ProductsWithCart = () => {
       toast.error("Your cart is empty");
       return;
     }
+
+    toast.success("Checkout ain't implemented yet");
   };
 
   if (isLoading) return <div>Loading...</div>;
