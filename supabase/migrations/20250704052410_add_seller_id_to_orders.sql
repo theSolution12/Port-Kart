@@ -1,0 +1,1 @@
+ALTER TABLE orders ADD COLUMN seller_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
