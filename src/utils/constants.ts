@@ -3,5 +3,4 @@ export const QUERY_KEYS = {
   USER: 'user',
   CURRENT_USER: 'current-user',
   CART: 'cart',
-  TOTAL_USERS: 'total-users',
 }

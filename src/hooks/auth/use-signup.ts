@@ -3,7 +3,6 @@ import { signUpWithEmail } from "@/services/auth/auth.services";
 import { createUserProfile } from "@/services/auth/profile.services";
 import { queryClient } from "@/lib/tanstack/client";
 import { useNavigate } from "react-router-dom";
-import { QUERY_KEYS } from "@/utils/constants";
 
 type SignUpPayload = {
   name: string;
@@ -21,8 +20,7 @@ const useSignUp = () => {
       await createUserProfile({ id: user.id, name, email, role });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TOTAL_USERS] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       navigate("/login");
     },
   });
