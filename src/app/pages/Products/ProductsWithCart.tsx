@@ -6,7 +6,6 @@ import useUpdateCartQuantity from "@/hooks/api/cart/use-update-cart-quantity";
 import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart";
 import useAddToCart from "@/hooks/api/cart/use-add-to-cart";
 import toast from "react-hot-toast";
-import useCheckout from "@/hooks/api/checkout/use-checkout";
 
 const ProductsWithCart = () => {
   const { user } = useAuth();
@@ -17,7 +16,6 @@ const ProductsWithCart = () => {
   const { mutate: addToCart } = useAddToCart();
   const { mutate: updateQuantity } = useUpdateCartQuantity();
   const { mutate: removeFromCart } = useRemoveFromCart();
-  const { mutate: checkout, isPending: checkingOut } = useCheckout();
 
   const [cartOpen, setCartOpen] = useState(true);
   const [address, setAddress] = useState("");
@@ -33,7 +31,6 @@ const ProductsWithCart = () => {
       toast.error("Your cart is empty");
       return;
     }
-    checkout({ userId, address });
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -190,10 +187,10 @@ const ProductsWithCart = () => {
               </div>
               <button
                 className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold shadow-lg transition-colors text-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                disabled={cartItems.length === 0 || checkingOut}
+                disabled={cartItems.length === 0 || !address.trim()}
                 onClick={handleCheckout}
               >
-                {checkingOut ? "Processing..." : "Proceed to Checkout"}
+                {"Proceed to Checkout"}
               </button>
             </div>
           </div>
