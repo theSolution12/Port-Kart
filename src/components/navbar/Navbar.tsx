@@ -29,13 +29,27 @@ const Navbar = () => {
                         {user ? (
                             <>
                                 {role === 'seller' && (
-                                    <button
+                                    <>
+                                       <button
                                         onClick={() => navigate('/seller/dashboard')}
                                         className="text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-600 transition-colors bg-indigo-500"
                                     >
                                         Your Store
                                     </button>
+                                    <button
+                                        onClick={() => navigate('/seller/selling-history')}
+                                        className="text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-600 transition-colors bg-indigo-500"
+                                    >
+                                        Selling History
+                                    </button> 
+                                    </>
                                 )}
+                                <button
+                                    onClick={() => navigate('/orders')}
+                                    className="text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                                >
+                                    Orders
+                                </button>
                                 <LogoutButton />
                             </>
                         ) : (

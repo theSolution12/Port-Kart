@@ -7,23 +7,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Dashboard from './app/pages/Dashboard/Dashboard'
 import SellerDashboard from './app/pages/Seller/Dashboard'
 import ProductsWithCart from './app/pages/Products/ProductsWithCart'
-import { useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { queryClient } from '@/lib/tanstack/client';
-import { QUERY_KEYS } from '@/utils/constants';
 import { Toaster } from 'react-hot-toast'
+import OrdersPage from './app/pages/User/Orders'
+import SellingHistory from './app/pages/Seller/SellingHistory'
 
 function App() {
-  useEffect(() => {
-    const { CURRENT_USER, USER } = QUERY_KEYS;
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      queryClient.invalidateQueries({ queryKey: [CURRENT_USER] });
-      queryClient.invalidateQueries({ queryKey: [USER] });
-    });
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, []);
   return (
     <BrowserRouter>
       <Navbar />
@@ -34,8 +22,10 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/products" element={<ProductsWithCart />} />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/seller/selling-history" element={<SellingHistory />} />
       </Routes>
-        <Toaster position='bottom-right' reverseOrder={false} toastOptions={{ duration: 2000 }}/>
+        <Toaster position='bottom-right' reverseOrder={false} toastOptions={{ duration: 2500 }}/>
     </BrowserRouter>
   )
 }
