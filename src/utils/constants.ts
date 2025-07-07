@@ -5,4 +5,5 @@ export const QUERY_KEYS = {
   CART: 'cart',
   ORDERS: 'orders',
   SELLING_HISTORY: 'selling-history',
+  TOTAL_USERS: 'total-users',
 }
