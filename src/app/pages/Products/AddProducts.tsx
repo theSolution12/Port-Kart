@@ -22,7 +22,7 @@ const AddProducts = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title || !form.description || !form.price || !form.image_url) {
-      setFormError("All fields are required.");
+      setFormError("ALL FIELDS ARE REQUIRED!");
       return;
     }
     setFormError("");
@@ -36,65 +36,96 @@ const AddProducts = () => {
   }, [user]);
 
   if (role !== "seller" || !user) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-indigo-50 font-sans text-lg text-gray-600">You are not authorized to add products</div>;
+    return (
+      <div className="min-h-screen bg-red-300 p-8 font-mono">
+        <div className="max-w-md mx-auto">
+          <div className="bg-white border-8 border-black shadow-[8px_8px_0px_0px_#000000] p-8 text-center">
+            <h1 className="text-4xl font-black mb-4">ACCESS DENIED!</h1>
+            <p className="text-xl font-bold">SELLERS ONLY!</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-indigo-50 font-sans">
-      <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur rounded-xl shadow-xl p-10 w-full max-w-md flex flex-col gap-6 border border-slate-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2 tracking-tight">Add a New Product</h2>
-        <input
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-          className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400 min-h-[80px]"
-          required
-        />
-        <input
-          name="price"
-          type="number"
-          placeholder="Price"
-          value={form.price}
-          onChange={handleChange}
-          className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-          required
-        />
-        <input
-          name="stock"
-          type="number"
-          placeholder="Stock"
-          value={form.stock}
-          onChange={handleChange}
-          className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-          required
-        />
-        <input
-          name="image_url"
-          placeholder="Image URL"
-          value={form.image_url}
-          onChange={handleChange}
-          className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-          required
-        />
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-indigo-600 text-white py-3 rounded-lg font-semibold text-lg shadow hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300"
-        >
-          {isPending ? "Adding..." : "Add Product"}
-        </button>
-        {formError && <p className="text-xs text-red-500 text-center mt-1">{formError}</p>}
-        {error && <p className="text-xs text-red-500 text-center mt-1">Error: {(error as Error).message}</p>}
-      </form>
+    <div className="min-h-screen bg-purple-300 p-8 font-mono">
+      <div className="max-w-md mx-auto">
+        <div className="bg-white border-8 border-black shadow-[8px_8px_0px_0px_#000000] p-8">
+          <h1 className="text-4xl font-black mb-8 text-center bg-black text-white p-4 -m-8 mb-8">
+            ADD PRODUCT
+          </h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <input
+              name="title"
+              placeholder="PRODUCT TITLE"
+              value={form.title}
+              onChange={handleChange}
+              className="w-full p-4 border-4 border-black bg-cyan-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-cyan-300"
+              required
+            />
+            
+            <textarea
+              name="description"
+              placeholder="PRODUCT DESCRIPTION"
+              value={form.description}
+              onChange={handleChange}
+              className="w-full p-4 border-4 border-black bg-lime-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-lime-300 min-h-[100px] resize-none"
+              required
+            />
+            
+            <input
+              name="price"
+              type="number"
+              placeholder="PRICE (₹)"
+              value={form.price}
+              onChange={handleChange}
+              className="w-full p-4 border-4 border-black bg-pink-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-pink-300"
+              required
+            />
+            
+            <input
+              name="stock"
+              type="number"
+              placeholder="STOCK QUANTITY"
+              value={form.stock}
+              onChange={handleChange}
+              className="w-full p-4 border-4 border-black bg-orange-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-orange-300"
+              required
+            />
+            
+            <input
+              name="image_url"
+              placeholder="IMAGE URL"
+              value={form.image_url}
+              onChange={handleChange}
+              className="w-full p-4 border-4 border-black bg-yellow-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-yellow-300"
+              required
+            />
+            
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-black text-white p-4 border-4 border-black font-black text-xl hover:bg-gray-800 active:shadow-none shadow-[4px_4px_0px_0px_#22c55e] disabled:opacity-50"
+            >
+              {isPending ? "ADDING..." : "ADD PRODUCT"}
+            </button>
+            
+            {formError && (
+              <div className="bg-red-300 border-4 border-black p-4 text-center font-bold">
+                {formError}
+              </div>
+            )}
+            
+            {error && (
+              <div className="bg-red-300 border-4 border-black p-4 text-center font-bold">
+                ERROR: {(error as Error).message.toUpperCase()}
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

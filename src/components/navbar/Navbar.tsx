@@ -7,64 +7,75 @@ const Navbar = () => {
     const { user, role } = useAuth();
 
     return (
-        <nav className="w-full h-16 bg-gradient-to-r from-blue-600 to-indigo-700 shadow-lg z-50 border-b border-blue-700">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-                <div className="flex justify-between items-center h-full">
-                    <div className="flex-shrink-0 flex items-center">
-                        <span className="text-white text-2xl font-extrabold tracking-tight cursor-pointer" onClick={() => navigate('/')}>PortCart</span>
+        <nav className="w-full bg-black border-b-8 border-white font-mono sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="flex justify-between items-center h-20">
+                    <div className="flex-shrink-0">
+                        <button 
+                            onClick={() => navigate('/')}
+                            className="text-white text-4xl font-black tracking-tight hover:text-yellow-300 transition-colors"
+                        >
+                            PORTCART
+                        </button>
                     </div>
-                    <div className="flex space-x-4">
+                    
+                    <div className="flex space-x-2">
                         <button
                             onClick={() => navigate('/')}
-                            className="text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                            className="bg-cyan-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-cyan-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                         >
-                            Dashboard
+                            DASHBOARD
                         </button>
+                        
                         <button
                             onClick={() => navigate('/products')}
-                            className="text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                            className="bg-lime-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-lime-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                         >
-                            Products
+                            PRODUCTS
                         </button>
+                        
                         {user ? (
                             <>
                                 {role === 'seller' && (
                                     <>
                                        <button
                                         onClick={() => navigate('/seller/dashboard')}
-                                        className="text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-600 transition-colors bg-indigo-500"
+                                        className="bg-purple-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-purple-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                                     >
-                                        Your Store
+                                        YOUR STORE
                                     </button>
                                     <button
                                         onClick={() => navigate('/seller/selling-history')}
-                                        className="text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-600 transition-colors bg-indigo-500"
+                                        className="bg-pink-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-pink-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                                     >
-                                        Selling History
+                                        SALES
                                     </button> 
                                     </>
                                 )}
+                                
                                 <button
                                     onClick={() => navigate('/orders')}
-                                    className="text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                                    className="bg-orange-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-orange-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                                 >
-                                    Orders
+                                    ORDERS
                                 </button>
+                                
                                 <LogoutButton />
                             </>
                         ) : (
                             <>
                                 <button
                                     onClick={() => navigate('/login')}
-                                    className="text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                                    className="bg-green-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-green-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                                 >
-                                    Login
+                                    LOGIN
                                 </button>
+                                
                                 <button
                                     onClick={() => navigate('/signup')}
-                                    className="text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                                    className="bg-yellow-400 text-black px-4 py-2 border-4 border-black font-black hover:bg-yellow-300 shadow-[4px_4px_0px_0px_#000000] active:shadow-none"
                                 >
-                                    Signup
+                                    SIGNUP
                                 </button>
                             </>
                         )}

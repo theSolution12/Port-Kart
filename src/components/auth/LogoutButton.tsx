@@ -1,25 +1,19 @@
 import useLogout from "@/hooks/auth/use-logout";
-// import { useNavigate } from "react-router-dom";
 
 const LogoutButton = () => {
   const { mutate, isPending } = useLogout();
-  // const navigate = useNavigate();
 
   const handleLogout = () => {
-    mutate(undefined, {
-      // onSuccess: () => {
-      //   navigate("/");
-      // },
-    });
+    mutate(undefined, {});
   };
 
   return (
     <button
       onClick={handleLogout}
       disabled={isPending}
-      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+      className="bg-red-500 text-white px-4 py-2 border-4 border-black font-black hover:bg-red-400 shadow-[4px_4px_0px_0px_#000000] active:shadow-none disabled:opacity-50"
     >
-      {isPending ? "Logging out..." : "Logout"}
+      {isPending ? "LOGGING OUT..." : "LOGOUT"}
     </button>
   );
 };

@@ -19,47 +19,40 @@ const SignupForm = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Name validation
     if (!form.name) {
-      newErrors.name = "Name is required";
+      newErrors.name = "NAME IS REQUIRED";
     } else if (form.name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
+      newErrors.name = "NAME TOO SHORT";
     }
 
-    // Email validation
     if (!form.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = "EMAIL IS REQUIRED";
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = "EMAIL IS INVALID";
     }
 
-    // Password validation
     if (!form.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = "PASSWORD IS REQUIRED";
     } else if (form.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "PASSWORD TOO SHORT";
     }
 
-    // Confirm password validation
     if (!form.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
+      newErrors.confirmPassword = "CONFIRM PASSWORD";
     } else if (form.password !== form.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = "PASSWORDS DON'T MATCH";
     }
 
-    // Address validation
     if (!form.address) {
-      newErrors.address = "Address is required";
+      newErrors.address = "ADDRESS IS REQUIRED";
     }
 
-    // Seller code validation
     if (form.role === "seller" && form.sellerCode !== SELLER_SECRET) {
-      newErrors.sellerCode = "Invalid seller code";
+      newErrors.sellerCode = "INVALID SELLER CODE";
     }
 
-    // Role validation
     if (!form.role) {
-      newErrors.role = "Role is required";
+      newErrors.role = "ROLE IS REQUIRED";
     }
 
     setErrors(newErrors);
@@ -85,95 +78,119 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-indigo-50 font-sans">
-      <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur rounded-xl shadow-xl p-10 w-full max-w-md flex flex-col gap-6 border border-slate-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2 tracking-tight">Create your account</h2>
-        <div>
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Name"
-            className={`border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400 ${errors.name ? 'border-red-400' : ''}`}
-            required
-          />
-          {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+    <div className="min-h-screen bg-yellow-300 p-8 font-mono">
+      <div className="max-w-md mx-auto">
+        <div className="bg-white border-8 border-black shadow-[8px_8px_0px_0px_#000000] p-8">
+          <h1 className="text-4xl font-black mb-8 text-center bg-black text-white p-4 -m-8 mb-8">
+            CREATE ACCOUNT
+          </h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="FULL NAME"
+                className={`w-full p-4 border-4 border-black bg-cyan-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-cyan-300 ${errors.name ? 'bg-red-300' : ''}`}
+                required
+              />
+              {errors.name && <p className="text-red-600 font-bold mt-2 text-sm">{errors.name}</p>}
+            </div>
+
+            <div>
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="EMAIL ADDRESS"
+                className={`w-full p-4 border-4 border-black bg-lime-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-lime-300 ${errors.email ? 'bg-red-300' : ''}`}
+                required
+              />
+              {errors.email && <p className="text-red-600 font-bold mt-2 text-sm">{errors.email}</p>}
+            </div>
+
+            <div>
+              <input
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="PASSWORD"
+                type="password"
+                className={`w-full p-4 border-4 border-black bg-pink-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-pink-300 ${errors.password ? 'bg-red-300' : ''}`}
+                required
+              />
+              {errors.password && <p className="text-red-600 font-bold mt-2 text-sm">{errors.password}</p>}
+            </div>
+
+            <div>
+              <input
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                placeholder="CONFIRM PASSWORD"
+                type="password"
+                className={`w-full p-4 border-4 border-black bg-orange-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-orange-300 ${errors.confirmPassword ? 'bg-red-300' : ''}`}
+                required
+              />
+              {errors.confirmPassword && <p className="text-red-600 font-bold mt-2 text-sm">{errors.confirmPassword}</p>}
+            </div>
+
+            <div>
+              <input
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                placeholder="DELIVERY ADDRESS"
+                className="w-full p-4 border-4 border-black bg-purple-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-purple-300"
+                required
+              />
+              {errors.address && <p className="text-red-600 font-bold mt-2 text-sm">{errors.address}</p>}
+            </div>
+
+            <select
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+              className="w-full p-4 border-4 border-black bg-blue-200 text-black font-bold text-lg focus:outline-none focus:bg-blue-300"
+            >
+              <option value="customer">CUSTOMER</option>
+              <option value="seller">SELLER</option>
+            </select>
+
+            {form.role === "seller" && (
+              <input
+                name="sellerCode"
+                value={form.sellerCode}
+                onChange={handleChange}
+                placeholder="SELLER SECRET CODE"
+                type="password"
+                className="w-full p-4 border-4 border-black bg-red-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-red-300"
+              />
+            )}
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-black text-white p-4 border-4 border-black font-black text-xl hover:bg-gray-800 active:shadow-none shadow-[4px_4px_0px_0px_#ef4444] disabled:opacity-50"
+            >
+              {isPending ? "CREATING..." : "CREATE ACCOUNT"}
+            </button>
+
+            {isSuccess && (
+              <div className="bg-green-300 border-4 border-black p-4 text-center font-bold">
+                ACCOUNT CREATED SUCCESSFULLY!
+              </div>
+            )}
+            
+            {error && (
+              <div className="bg-red-300 border-4 border-black p-4 text-center font-bold">
+                ERROR: {(error as Error).message.toUpperCase()}
+              </div>
+            )}
+          </form>
         </div>
-        <div>
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className={`border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400 ${errors.email ? 'border-red-400' : ''}`}
-            required
-          />
-          {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
-        </div>
-        <div>
-          <input
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Password"
-            type="password"
-            className={`border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400 ${errors.password ? 'border-red-400' : ''}`}
-            required
-          />
-          {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
-        </div>
-        <div>
-          <input
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm Password"
-            type="password"
-            className={`border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400 ${errors.confirmPassword ? 'border-red-400' : ''}`}
-            required
-          />
-          {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
-        </div>
-        <div>
-          <input
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-            placeholder="Address"
-            className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-            required
-          />
-          {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
-        </div>
-        <select
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-          className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800"
-        >
-          <option value="customer">Customer</option>
-          <option value="seller">Seller</option>
-        </select>
-        {form.role === "seller" && (
-          <input
-            name="sellerCode"
-            value={form.sellerCode}
-            onChange={handleChange}
-            placeholder="Seller secret"
-            type="password"
-            className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-          />
-        )}
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-indigo-600 text-white py-3 rounded-lg font-semibold text-lg shadow hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300"
-        >
-          {isPending ? "Signing up..." : "Sign Up"}
-        </button>
-        {isSuccess && <p className="text-green-600 text-center text-sm">Signed up successfully!</p>}
-        {error && <p className="text-red-600 text-center text-sm">{(error as Error).message}</p>}
-      </form>
+      </div>
     </div>
   );
 };

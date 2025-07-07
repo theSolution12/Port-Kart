@@ -19,40 +19,59 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-indigo-50 font-sans">
-      <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur rounded-xl shadow-xl p-10 w-full max-w-md flex flex-col gap-6 border border-slate-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2 tracking-tight">Sign in to your account</h2>
-        <div>
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-            required
-          />
+    <div className="min-h-screen bg-cyan-300 p-8 font-mono">
+      <div className="max-w-md mx-auto">
+        <div className="bg-white border-8 border-black shadow-[8px_8px_0px_0px_#000000] p-8">
+          <h1 className="text-4xl font-black mb-8 text-center bg-black text-white p-4 -m-8 mb-8">
+            LOGIN
+          </h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="EMAIL ADDRESS"
+                className="w-full p-4 border-4 border-black bg-lime-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-lime-300"
+                required
+              />
+            </div>
+            
+            <div>
+              <input
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="PASSWORD"
+                type="password"
+                className="w-full p-4 border-4 border-black bg-pink-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-pink-300"
+                required
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-black text-white p-4 border-4 border-black font-black text-xl hover:bg-gray-800 active:shadow-none shadow-[4px_4px_0px_0px_#22c55e] disabled:opacity-50"
+            >
+              {isPending ? "SIGNING IN..." : "SIGN IN"}
+            </button>
+            
+            {isSuccess && (
+              <div className="bg-green-300 border-4 border-black p-4 text-center font-bold">
+                LOGGED IN SUCCESSFULLY!
+              </div>
+            )}
+            
+            {error && (
+              <div className="bg-red-300 border-4 border-black p-4 text-center font-bold">
+                ERROR: {(error as Error).message.toUpperCase()}
+              </div>
+            )}
+          </form>
         </div>
-        <div>
-          <input
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Password"
-            type="password"
-            className="border border-slate-200 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-indigo-600 text-white py-3 rounded-lg font-semibold text-lg shadow hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300"
-        >
-          {isPending ? "Signing in..." : "Sign In"}
-        </button>
-        {isSuccess && <p className="text-green-600 text-center text-sm">Logged in successfully!</p>}
-        {error && <p className="text-red-600 text-center text-sm">{(error as Error).message}</p>}
-      </form>
+      </div>
     </div>
   );
 };
