@@ -13,8 +13,7 @@ const Dashboard = () => {
       <div className="max-w-5xl mx-auto">
         {/* Welcome Section */}
         <div className="bg-black text-white p-8 border-8 border-black shadow-[8px_8px_0px_0px_#ffffff] mb-8">
-          <h1 className="text-5xl font-black mb-4">WELCOME BACK, {name?.toUpperCase()}! 👋</h1>
-          <p className="text-2xl font-bold">YOUR STORE OVERVIEW TODAY</p>
+          <h1 className="text-5xl font-black mb-4">{name ? `WELCOME BACK, ${name.toUpperCase()}! 👋` : "WELCOME TO PORTKART"}</h1>
         </div>
 
         {/* Summary Cards */}

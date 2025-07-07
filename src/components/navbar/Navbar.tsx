@@ -15,7 +15,7 @@ const Navbar = () => {
                             onClick={() => navigate('/')}
                             className="text-white text-4xl font-black tracking-tight hover:text-yellow-300 transition-colors"
                         >
-                            PORTCART
+                            PORTKART
                         </button>
                     </div>
                     
