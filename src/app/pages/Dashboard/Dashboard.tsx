@@ -1,76 +1,148 @@
-import useGetProducts from "@/hooks/api/products/use-get-products";
-import { useAuth } from "@/hooks/auth/use-auth";
-import { useNavigate } from "react-router-dom";
-import useGetTotalUsers from "@/hooks/api/user/use-get-total-users";
+import useGetProducts from "@/hooks/api/products/use-get-products"
+import useGetTotalUsers from "@/hooks/api/user/use-get-total-users"
+import { useAuth } from "@/hooks/auth/use-auth"
+import { useNavigate } from "react-router-dom"
 
 const Dashboard = () => {
-  const {name} = useAuth();
-  const {data: products} = useGetProducts();
-  const productCount = products?.length ?? 0;
+  const { name } = useAuth()
+  const { data: products } = useGetProducts()
+  const productCount = products?.length ?? 0
   const navigate = useNavigate();
   const { data: totalUsers } = useGetTotalUsers();
-  const totalUsersCount = totalUsers?.length ?? 0;
+  const userCount = totalUsers?.length ?? 0;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-6 px-4">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome back, {name}! 👋</h1>
-          <p className="text-lg text-gray-500">Here's a quick overview of your store's performance today.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Welcome back, {name}!</h1>
+          <p className="text-muted-foreground">{"Here's a quick overview of your store's performance today."}</p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform"
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
+          <div
+            className="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => navigate("/products")}
           >
-            <div className="bg-blue-100 p-3 rounded-full mb-3">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" /></svg>
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium">Total Products</h3>
+              <svg
+                className="h-4 w-4 text-muted-foreground"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+              >
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+              </svg>
             </div>
-            <div className="text-2xl font-bold text-gray-800">{productCount}</div>
-            <div className="text-gray-500">Products</div>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">{productCount}</div>
+              <p className="text-xs text-muted-foreground">Products in the store</p>
+            </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform">
-            <div className="bg-green-100 p-3 rounded-full mb-3">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.13a4 4 0 10-8 0 4 4 0 008 0zm6 0a4 4 0 10-8 0 4 4 0 008 0z" /></svg>
+
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium">Total Users</h3>
+              <svg
+                className="h-4 w-4 text-muted-foreground"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
             </div>
-            <div className="text-2xl font-bold text-gray-800">{totalUsersCount}</div>
-            <div className="text-gray-500">Users</div>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">{userCount}</div>
+              <p className="text-xs text-muted-foreground">Total users</p>
+            </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform">
-            <div className="bg-purple-100 p-3 rounded-full mb-3">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z" /></svg>
+
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium">Total Sales</h3>
+              <svg
+                className="h-4 w-4 text-muted-foreground"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
             </div>
-            <div className="text-2xl font-bold text-gray-800">$2,340</div>
-            <div className="text-gray-500">Sales</div>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">₹2,340</div>
+              <p className="text-xs text-muted-foreground">Revenue this month</p>
+            </div>
           </div>
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
-          <ul className="divide-y divide-gray-100">
-            <li className="py-3 flex items-center justify-between">
-              <span className="text-gray-700">New product <span className="font-semibold text-blue-600">"Wireless Headphones"</span> added</span>
-              <span className="text-xs text-gray-400">2 mins ago</span>
-            </li>
-            <li className="py-3 flex items-center justify-between">
-              <span className="text-gray-700">User <span className="font-semibold text-green-600">John Doe</span> signed up</span>
-              <span className="text-xs text-gray-400">10 mins ago</span>
-            </li>
-            <li className="py-3 flex items-center justify-between">
-              <span className="text-gray-700">Order <span className="font-semibold text-purple-600">#1234</span> completed</span>
-              <span className="text-xs text-gray-400">30 mins ago</span>
-            </li>
-            <li className="py-3 flex items-center justify-between">
-              <span className="text-gray-700">Stock updated for <span className="font-semibold text-blue-600">"Smart Watch"</span></span>
-              <span className="text-xs text-gray-400">1 hour ago</span>
-            </li>
-          </ul>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight">Recent Activity</h3>
+            <p className="text-sm text-muted-foreground">Latest updates from your store</p>
+          </div>
+          <div className="p-6 pt-0">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium leading-none">New product added</p>
+                  <p className="text-sm text-muted-foreground">Wireless Headphones was added to your store</p>
+                </div>
+                <div className="text-sm text-muted-foreground">2 mins ago</div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium leading-none">New user registration</p>
+                  <p className="text-sm text-muted-foreground">John Doe signed up for an account</p>
+                </div>
+                <div className="text-sm text-muted-foreground">10 mins ago</div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium leading-none">Order completed</p>
+                  <p className="text-sm text-muted-foreground">Order #1234 has been completed</p>
+                </div>
+                <div className="text-sm text-muted-foreground">30 mins ago</div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium leading-none">Stock updated</p>
+                  <p className="text-sm text-muted-foreground">Smart Watch inventory was updated</p>
+                </div>
+                <div className="text-sm text-muted-foreground">1 hour ago</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard; 
+export default Dashboard

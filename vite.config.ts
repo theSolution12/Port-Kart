@@ -13,4 +13,14 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  server: {
+    host: true,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      '.ngrok-free.app',
+      '.ngrok.io',
+      '.ngrok.app'
+    ],
+  },
 })

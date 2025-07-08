@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { useAuth } from "@/hooks/auth/use-auth";
-import useGetProducts from "@/hooks/api/products/use-get-products";
-import useGetCartItems from "@/hooks/api/cart/use-get-cart-items";
-import useUpdateCartQuantity from "@/hooks/api/cart/use-update-cart-quantity";
-import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart";
-import useAddToCart from "@/hooks/api/cart/use-add-to-cart";
-import toast from "react-hot-toast";
-import useCheckout from "@/hooks/api/checkout/use-checkout";
+import { useState } from "react"
+import { useAuth } from "@/hooks/auth/use-auth"
+import useGetProducts from "@/hooks/api/products/use-get-products"
+import useGetCartItems from "@/hooks/api/cart/use-get-cart-items"
+import useUpdateCartQuantity from "@/hooks/api/cart/use-update-cart-quantity"
+import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart"
+import useAddToCart from "@/hooks/api/cart/use-add-to-cart"
+import { useCheckout } from "@/hooks/checkout/use-checkout"
+import { useDebounce } from "@/hooks/debounce/use-debounce"
+import toast from "react-hot-toast"
 
 const ProductsWithCart = () => {
   const { user } = useAuth();
@@ -26,196 +27,295 @@ const ProductsWithCart = () => {
 
   const handleCheckout = () => {
     if (!address.trim()) {
-      toast.error("Please enter your delivery address");
-      return;
+      toast.error("Please enter your delivery address")
+      return
     }
     if (cartItems.length === 0) {
-      toast.error("Your cart is empty");
-      return;
+      toast.error("Your cart is empty")
+      return
     }
-    checkout({ userId, address });
-  };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+    checkout(
+      { userId, address },
+      {
+        onSuccess: (response) => {
+          toast.success(response.message)
+          setAddress("")
+        },
+        onError: (error) => {
+          toast.error(error.message || "Checkout failed")
+        },
+      },
+    )
+  }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-100 font-sans py-10 px-4 flex gap-6 relative">
-      {/* Product List */}
-      <div className="flex-1">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight text-center drop-shadow-sm">Discover Products</h1>
-        <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white/70 backdrop-blur-lg rounded-xl shadow-lg p-3 flex flex-col border border-slate-100 hover:shadow-2xl transition-shadow duration-300 group relative overflow-hidden max-w-[280px] mx-auto"
-            >
-              {product.image_url && (
-                <div className="w-full aspect-[3/2] mb-2 rounded-lg overflow-hidden border border-slate-200">
-                  <img
-                    src={product.image_url}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <h2 className="text-base font-semibold text-gray-900 mb-1 truncate">{product.title}</h2>
-              <p className="text-gray-500 mb-1 text-xs line-clamp-1">Stock: {product.stock}</p>
-              <div className="mt-auto flex flex-col gap-1">
-                <span className="text-indigo-700 font-bold text-base">₹{product.price}</span>
-                <button
-                  onClick={() => {
-                    if (!user) {
-                      toast.error("Ye must be logged in to add to yer cart!");
-                      return;
-                    }
-
-                    if (product.stock <= 0) {
-                      toast.error("No stock left for this item, Cap'n!");
-                      return;
-                    }
-
-                    addToCart(
-                      { userId, productId: product.id },
-                      {
-                        onSuccess: () => toast.success("Added to cart!"),
-                        onError: (err) => toast.error(`Failed: ${err.message}`),
-                      }
-                    );
-                  }}
-                  className="mt-1 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow transition-colors duration-200 text-sm flex items-center gap-1 justify-center"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437m0 0L7.2 15.607a2.25 2.25 0 002.2 1.743h7.2a2.25 2.25 0 002.2-1.743l1.174-6.607a1.125 1.125 0 00-1.1-1.357H6.272m-1.166 0L4.5 6.75m0 0h15.75" />
-                  </svg>
-                  Add to Cart
-                </button>
-              </div>
-              {product.seller?.name && (
-                <div className="mt-2 text-xs text-gray-400">
-                  Sold by: <span className="font-medium text-gray-600">{product.seller.name}</span>
-                </div>
-              )}
-            </div>
-          ))}
+  if (isLoading)
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold">Loading products...</h2>
         </div>
       </div>
+    )
 
-      {/* Cart Sidebar */}
-      {user && cartOpen && (
-        <div className="relative transition-all duration-300 w-80 bg-white/60 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl flex flex-col sticky top-8 h-[80vh] min-h-[400px]">
-          <button
-            className="absolute -left-5 top-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10 transition-transform border-4 border-white"
-            onClick={() => setCartOpen(false)}
-            aria-label="Close cart"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437m0 0L7.2 15.607a2.25 2.25 0 002.2 1.743h7.2a2.25 2.25 0 002.2-1.743l1.174-6.607a1.125 1.125 0 00-1.1-1.357H6.272m-1.166 0L4.5 6.75m0 0h15.75" />
-            </svg>
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow border-2 border-white">
-                {cartCount}
-              </span>
-            )}
-          </button>
-          <div className="p-6 flex flex-col h-full">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Cart</h2>
-            <div className="flex-1 overflow-y-auto pr-1">
-              {cartItems.length === 0 ? (
-                <p className="text-gray-500 text-center mt-16">Your cart is empty.</p>
-              ) : (
-                <ul className="space-y-5 divide-y divide-slate-200">
-                  {cartItems.map((item) => (
-                    <li key={item.id} className="pt-2 first:pt-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium text-gray-800 truncate max-w-[120px]">{item.product.title}</span>
-                        <span className="font-semibold text-indigo-700">₹{item.product.price * item.quantity}</span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <button
-                          onClick={() => updateQuantity(
-                            { userId, productId: item.product_id, quantity: item.quantity - 1 },
-                            {
-                              onSuccess: () => toast.success("Quantity updated"),
-                              onError: (err) => toast.error(`Error: ${err.message}`),
-                            }
-                          )}
-                          className="px-2 bg-gray-200 hover:bg-gray-300 rounded text-lg font-bold"
-                          disabled={item.quantity <= 1}
-                        >–</button>
-                        <span className="font-semibold text-gray-700 w-6 text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(
-                            { userId, productId: item.product_id, quantity: item.quantity + 1 },
-                            {
-                              onSuccess: () => toast.success("Quantity updated"),
-                              onError: (err) => toast.error(`Error: ${err.message}`),
-                            }
-                          )}
-                          className="px-2 bg-gray-200 hover:bg-gray-300 rounded text-lg font-bold"
-                        >+</button>
-                        <button
-                          onClick={() => removeFromCart(
-                            { userId, productId: item.product_id },
-                            {
-                              onSuccess: () => toast.success("Item removed from cart"),
-                              onError: (err) => toast.error(`Error: ${err.message}`),
-                            }
-                          )}
-                          className="ml-auto text-red-500 hover:underline text-xs font-medium px-2 py-1"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+  if (error)
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-destructive">Error: {error.message}</h2>
+        </div>
+      </div>
+    )
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-6 px-4">
+        <div className="flex gap-6">
+          {/* Product List */}
+          <div className="flex-1">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold tracking-tight mb-2">Products</h1>
+              <p className="text-muted-foreground">Discover our amazing products</p>
             </div>
-            <div className="mt-8 border-t border-slate-200 pt-4">
-              <div className="flex justify-between text-lg font-bold text-gray-800">
-                <span>Total</span>
-                <span>₹{total}</span>
-              </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Address</label>
-                <textarea
-                  name="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter your delivery address..."
-                  className="w-full p-3 border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 text-gray-800 placeholder-gray-400"
-                  rows={3}
+
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <svg
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
-              <button
-                className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold shadow-lg transition-colors text-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                disabled={cartItems.length === 0 || checkingOut}
-                onClick={handleCheckout}
-              >
-                {checkingOut ? "Processing..." : "Proceed to Checkout"}
-              </button>
+              {debouncedSearchQuery && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Found {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""} matching "
+                  {debouncedSearchQuery}"
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-2 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 xl:grid-cols-16">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="rounded border bg-card text-card-foreground shadow-sm">
+                  {product.image_url && (
+                    <div className="aspect-square overflow-hidden rounded-t">
+                      <img
+                        src={product.image_url || "/placeholder.svg"}
+                        alt={product.title}
+                        className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+                      />
+                    </div>
+                  )}
+
+                  <div className="p-1">
+                    <h3 className="font-semibold leading-none tracking-tight mb-1 text-lg line-clamp-2">{product.title}</h3>
+                    <p className="text-xs text-muted-foreground mb-1">Stock: {product.stock}</p>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-bold">₹{product.price}</span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        if (!user) {
+                          toast.error("Please log in to add items to cart")
+                          return
+                        }
+
+                        if (product.stock <= 0) {
+                          toast.error("Product is out of stock")
+                          return
+                        }
+
+                        addToCart(
+                          { userId, productId: product.id },
+                          {
+                            onSuccess: () => toast.success("Added to cart!"),
+                            onError: (err) => toast.error(`Failed: ${err.message}`),
+                          },
+                        )
+                      }}
+                      className="inline-flex items-center justify-center rounded text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-primary/90 h-7 px-3 py-1.5 w-full border border-2 border-secondary hover:border-primary/90"
+                    >
+                      Add to Cart
+                    </button>
+
+                    {product.seller?.name && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">Sold by: {product.seller.name}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Floating cart button if cart closed */}
-      {user && !cartOpen && (
-        <button
-          className="fixed right-6 top-1/7 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl z-50 border-4 border-white"
-          onClick={() => setCartOpen(true)}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437m0 0L7.2 15.607a2.25 2.25 0 002.2 1.743h7.2a2.25 2.25 0 002.2-1.743l1.174-6.607a1.125 1.125 0 00-1.1-1.357H6.272m-1.166 0L4.5 6.75m0 0h15.75" />
-          </svg>
-          {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow border-2 border-white">
-              {cartCount}
-            </span>
+          {/* Cart Sidebar */}
+          {user && cartOpen && (
+            <div className="w-80 rounded-lg border bg-card text-card-foreground shadow-sm h-fit sticky top-16">
+              <div className="flex flex-col space-y-1.5 p-6 relative">
+                <h3 className="text-2xl font-semibold leading-none tracking-tight">Your Cart</h3>
+                <button
+                  className="absolute top-4 right-4 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                  onClick={() => setCartOpen(false)}
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                  >
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6 pt-0">
+                <div className="max-h-96 overflow-y-auto mb-4">
+                  {cartItems.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">Your cart is empty</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {cartItems.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">{item.product.title}</h4>
+                            <p className="text-sm text-muted-foreground">₹{item.product.price} each</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <button
+                                onClick={() =>
+                                  updateQuantity(
+                                    { userId, productId: item.product_id, quantity: item.quantity - 1 },
+                                    {
+                                      onSuccess: () => toast.success("Quantity updated"),
+                                      onError: (err) => toast.error(`Error: ${err.message}`),
+                                    },
+                                  )
+                                }
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                                disabled={item.quantity <= 1}
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center text-sm">{item.quantity}</span>
+                              <button
+                                onClick={() =>
+                                  updateQuantity(
+                                    { userId, productId: item.product_id, quantity: item.quantity + 1 },
+                                    {
+                                      onSuccess: () => toast.success("Quantity updated"),
+                                      onError: (err) => toast.error(`Error: ${err.message}`),
+                                    },
+                                  )
+                                }
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                              >
+                                +
+                              </button>
+                              <button
+                                onClick={() =>
+                                  removeFromCart(
+                                    { userId, productId: item.product_id },
+                                    {
+                                      onSuccess: () => toast.success("Item removed"),
+                                      onError: (err) => toast.error(`Error: ${err.message}`),
+                                    },
+                                  )
+                                }
+                                className="ml-auto text-sm text-destructive hover:underline"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold">₹{item.product.price * item.quantity}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-lg font-semibold mb-4">
+                    <span>Total</span>
+                    <span>₹{total}</span>
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Delivery Address
+                    </label>
+                    <textarea
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Enter your delivery address..."
+                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                      rows={3}
+                    />
+                  </div>
+
+                  <button
+                    className="inline-flex items-center mt-4 justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full border border-2 border-primary hover:border-primary/90"
+                    disabled={cartItems.length === 0 || !address.trim()}
+                    onClick={handleCheckout}
+                  >
+                    Proceed to Checkout
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
-        </button>
-      )}
+
+          {/* Floating cart button if cart closed */}
+          {user && !cartOpen && (
+            <button
+              className="fixed right-6 top-1/2 -translate-y-1/2 inline-flex items-center justify-center rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-14 w-14 shadow-lg z-50"
+              onClick={() => setCartOpen(true)}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+              >
+                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13v4a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-4.8" />
+              </svg>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
