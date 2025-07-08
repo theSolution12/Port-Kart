@@ -4,6 +4,8 @@ import useUpdateStock from "@/hooks/api/seller/use-update-stock"
 import useDeleteProduct from "@/hooks/api/seller/use-delete-product"
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
+import { useDebounce } from "@/hooks/debounce/use-debounce"
+import { useState } from "react"
 
 const SellerDashboard = () => {
   const { user, role, loading } = useAuth()
@@ -63,6 +65,12 @@ const SellerDashboard = () => {
     })
   }
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-6 px-4">
@@ -92,7 +100,7 @@ const SellerDashboard = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div key={product.id} className="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -145,10 +153,10 @@ const SellerDashboard = () => {
                   </div>
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

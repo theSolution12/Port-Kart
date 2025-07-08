@@ -13,16 +13,7 @@ import "./App.css"
 import { Toaster } from "react-hot-toast"
 
 function App() {
-  useEffect(() => {
-    const { CURRENT_USER, USER } = QUERY_KEYS;
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      queryClient.invalidateQueries({ queryKey: [CURRENT_USER] });
-      queryClient.invalidateQueries({ queryKey: [USER] });
-    });
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, []);
+  
   return (
     <ThemeProvider defaultTheme="system" storageKey="portcart-theme">
       <Router>

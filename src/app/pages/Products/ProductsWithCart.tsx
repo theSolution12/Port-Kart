@@ -5,8 +5,8 @@ import useGetCartItems from "@/hooks/api/cart/use-get-cart-items"
 import useUpdateCartQuantity from "@/hooks/api/cart/use-update-cart-quantity"
 import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart"
 import useAddToCart from "@/hooks/api/cart/use-add-to-cart"
-import { useCheckout } from "@/hooks/checkout/use-checkout"
-import { useDebounce } from "@/hooks/debounce/use-debounce"
+import useCheckout from "@/hooks/api/checkout/use-checkout"
+import { useDebounce } from "@/hooks/debounce/use-debounce" 
 import toast from "react-hot-toast"
 
 const ProductsWithCart = () => {
@@ -18,7 +18,13 @@ const ProductsWithCart = () => {
   const { mutate: addToCart } = useAddToCart();
   const { mutate: updateQuantity } = useUpdateCartQuantity();
   const { mutate: removeFromCart } = useRemoveFromCart();
-  const { mutate: checkout, isPending: checkingOut } = useCheckout();
+  const { mutate: checkout } = useCheckout();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+  );
 
   const [cartOpen, setCartOpen] = useState(true);
   const [address, setAddress] = useState("");
