@@ -45,6 +45,7 @@ export function ModeToggle() {
         <div className="absolute right-0 mt-2 w-32 rounded-md border bg-popover p-1 text-popover-foreground shadow-md z-50">
           <button
             onClick={() => {
+              if (theme === "light") return
               setTheme("light")
               setIsOpen(false)
             }}
@@ -54,6 +55,7 @@ export function ModeToggle() {
           </button>
           <button
             onClick={() => {
+              if (theme === "dark") return
               setTheme("dark")
               setIsOpen(false)
             }}
@@ -63,6 +65,7 @@ export function ModeToggle() {
           </button>
           <button
             onClick={() => {
+              if (theme === "system") return
               setTheme("system")
               setIsOpen(false)
             }}
