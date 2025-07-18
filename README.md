@@ -106,7 +106,3 @@ A modern React-based frontend application, built with Vite and TypeScript, conta
 ```
 
 ---
-
-## License
-
-This project is licensed under the MIT License.
