@@ -1,69 +1,112 @@
-# React + TypeScript + Vite
+# Port-Kart
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React-based frontend application, built with Vite and TypeScript, containerized for easy deployment.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- React 19, Vite, TypeScript
+- Production-ready Docker and Docker Compose setup
+- Environment variable best practices
+- Static file serving with `serve`
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
+- [Node.js](https://nodejs.org/) (for local dev)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Local Development
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+3. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+---
+
+## Docker Usage
+
+### Build and Run with Docker
+
+1. **Build the Docker image:**
+   ```bash
+   docker build -t port-kart:latest .
+   ```
+2. **Run the container:**
+   ```bash
+   docker run -p 3000:3000 port-kart:latest
+   ```
+
+### Using Docker Compose
+
+1. **Start the app:**
+   ```bash
+   docker-compose up --build
+   ```
+2. **Stop the app:**
+   ```bash
+   docker-compose down
+   ```
+
+---
+
+## Environment Variables
+
+- **Never commit your `.env` files to the repository.**
+- `.env` files are excluded from the Docker build via `.dockerignore` for security.
+- For local development, place your `.env` file in the project root.
+- For production, provide environment variables at runtime using one of the following methods:
+  - `env_file` in `docker-compose.yml` (recommended for self-hosted servers)
+  - `environment` block in `docker-compose.yml`
+  - `docker run --env-file /path/to/prod.env ...`
+  - Orchestrator/secret manager (Kubernetes, AWS ECS, etc.)
+
+---
+
+## Production Best Practices
+
+- **Do not bake secrets into your Docker image.**
+- Use runtime environment variable injection (see above).
+- Use a reverse proxy (e.g., Nginx) for SSL and advanced routing if needed.
+- Monitor and update dependencies regularly.
+
+---
+
+## Static File Serving
+
+- The app is built to the `dist/` directory.
+- In production, static files are served using the [`serve`](https://www.npmjs.com/package/serve) package.
+- If you prefer, you can use Nginx or another static file server instead (see Dockerfile comments for guidance).
+
+---
+
+## Project Structure
+
+```
+├── Dockerfile
+├── docker-compose.yml
+├── package.json
+├── src/
+├── dist/ (build output)
+└── ...
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## License
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This project is licensed under the MIT License.
