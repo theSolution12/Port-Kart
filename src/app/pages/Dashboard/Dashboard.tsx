@@ -1,4 +1,5 @@
 import useGetProducts from "@/hooks/api/products/use-get-products";
+import useGetTotalUsers from "@/hooks/api/user/use-get-total-users";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +8,8 @@ const Dashboard = () => {
   const {data: products} = useGetProducts();
   const productCount = products?.length ?? 0;
   const navigate = useNavigate();
+  const {data: userArray} = useGetTotalUsers();
+  const totalUsers = userArray?.length;
   
   return (
     <div className="min-h-screen bg-yellow-300 p-8 font-mono">
@@ -33,7 +36,7 @@ const Dashboard = () => {
             <div className="bg-lime-300 border-4 border-black p-4 mb-4 inline-block">
               <div className="text-4xl">👥</div>
             </div>
-            <div className="text-4xl font-black text-black mb-2">54</div>
+            <div className="text-4xl font-black text-black mb-2">{totalUsers}</div>
             <div className="text-xl font-bold text-black">USERS</div>
           </div>
           
