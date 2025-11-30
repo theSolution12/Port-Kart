@@ -12,6 +12,7 @@ import type { CartItem } from "@/types/cart-items";
     const data = await api.post(
       "/api/cart/add-to-cart",
       { userId, productId },
+      { requireAuth: true }
     )
     return data;
   };
@@ -22,7 +23,8 @@ import type { CartItem } from "@/types/cart-items";
   export const getCartItems = async (userId: string): Promise<CartItem[]> => {
     const data = await api.post<CartItem[]>(
       "/api/cart/get-cart-items",
-      { userId }
+      { userId },
+      { requireAuth: true }
     )
     return data;
   };
@@ -41,7 +43,8 @@ import type { CartItem } from "@/types/cart-items";
   }) => {
     const data = await api.post(
       "/api/cart/update-cart-quantity",
-      { userId, productId, quantity }
+      { userId, productId, quantity },
+      { requireAuth: true }
     )
     return data;
   };
@@ -59,7 +62,8 @@ import type { CartItem } from "@/types/cart-items";
   }) => {
     const data = await api.post(
       "/api/cart/remove-from-cart",
-      { userId, productId }
+      { userId, productId },
+      { requireAuth: true }
     )
     return data;
   };

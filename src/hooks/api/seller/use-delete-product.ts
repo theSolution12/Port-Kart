@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { deleteProduct } from "@/services/products.services";
+import { deleteProduct } from "@/services/products/products.services";
 
 const useDeleteProduct = (onSuccess?: () => void) => {
   return useMutation({

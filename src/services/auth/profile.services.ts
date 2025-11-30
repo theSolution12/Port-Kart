@@ -22,12 +22,12 @@ export const getUserProfile = async (userId: string): Promise<{ name: string; ro
   const data = await api.post<{ name: string; role: string }>(
     "/api/profile/get-user-profile",
     {userId},
-    {requireAuth: false}
+    {requireAuth: true}
   )
   return data;
 }
 
 export const getTotalUsers = async (): Promise<unknown[]> => {
-  const data = await api.get<unknown[]>("/api/profile/get-total-users")
+  const data = await api.get<unknown[]>("/api/profile/get-total-users", { requireAuth: false })
   return data;
 };

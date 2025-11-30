@@ -9,7 +9,8 @@ export const dummyCheckout = async ({
   }) => {
     const data = await api.post<{ success: boolean; message: string }>(
       "/api/checkout/checkout",
-      { userId, address }
+      { userId, address },
+      { requireAuth: true }
     );
     return data;
   };

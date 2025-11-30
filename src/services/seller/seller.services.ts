@@ -5,7 +5,8 @@ import type { OrderItems } from "@/types/order-items";
 export const getMyProducts = async (sellerId: string): Promise<Product[]> => {
   const data = await api.post<Product[]>(
     "/api/seller/get-my-products",
-    { sellerId }
+    { sellerId },
+    { requireAuth: true }
   );
   return data;
 };
@@ -13,7 +14,8 @@ export const getMyProducts = async (sellerId: string): Promise<Product[]> => {
 export const getSellingHistory = async (sellerId: string): Promise<OrderItems[]> => {
   const data = await api.post<OrderItems[]>(
     "/api/seller/get-selling-history",
-    { sellerId }
+    { sellerId },
+    { requireAuth: true }
   );
   return data;
 };

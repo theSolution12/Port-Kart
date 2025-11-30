@@ -19,7 +19,7 @@ export const loginWithEmail = async (email: string, password: string) => {
 };
 
 export const getCurrentUser = async (): Promise<{ id: string; email?: string }> => {
-  return api.get<{ id: string; email?: string }>("/api/auth/me");
+  return api.get<{ id: string; email?: string }>("/api/auth/me", { requireAuth: true });
 };
 
 export const logout = async () => {
