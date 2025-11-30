@@ -9,6 +9,7 @@ import useRemoveFromCart from "@/hooks/api/cart/use-remove-from-cart"
 import useAddToCart from "@/hooks/api/cart/use-add-to-cart"
 import { useCheckout } from "@/hooks/checkout/use-checkout"
 import { useDebounce } from "@/hooks/debounce/use-debounce"
+import type { CartItem } from "@/types/cart-items"
 import toast from "react-hot-toast"
 
 const ProductsWithCart = () => {
@@ -16,7 +17,7 @@ const ProductsWithCart = () => {
   const userId = user?.id ?? ""
 
   const { data: products = [], isLoading, error } = useGetProducts()
-  const { data: cartItems = [] } = useGetCartItems(userId)
+  const { data: cartItems = [] as CartItem[] } = useGetCartItems(userId)
   const { mutate: addToCart } = useAddToCart()
   const { mutate: updateQuantity } = useUpdateCartQuantity()
   const { mutate: removeFromCart } = useRemoveFromCart()

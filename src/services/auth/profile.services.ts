@@ -1,38 +1,33 @@
-import { supabase } from "@/lib/supabase/client";
 import type { User } from "@/types/user";
+import api from "@/lib/api/client";
 
 export const createUserProfile = async ({
   id,
   name,
   email,
   role = "customer",
-}: User) => {
-  const { error } = await supabase.from("profiles").insert([{ id, name, email, role }]);
-  if (error) throw error;
-};
+  sellerCode,
+}: User & { sellerCode?: string }) => {
+  const data = await api.post(
+    "/api/profile/create-user-profile",
+    {id, name, email, role, sellerCode},
+    {requireAuth: false}
+  );
 
-// Get current user (from supabase.auth)
-export const getCurrentUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error) throw error;
-  return data.user;
+  return data;
 };
 
 // Get user profile (already exists)
-export const getUserProfile = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("name, role")
-    .eq("id", userId)
-    .single();
-  if (error) throw new Error(error.message);
+export const getUserProfile = async (userId: string): Promise<{ name: string; role: string }> => {
+  const data = await api.post<{ name: string; role: string }>(
+    "/api/profile/get-user-profile",
+    {userId},
+    {requireAuth: false}
+  )
   return data;
 }
 
-export const getTotalUsers = async () => {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*", { count: "exact" });
-  if (error) throw new Error(error.message);
+export const getTotalUsers = async (): Promise<unknown[]> => {
+  const data = await api.get<unknown[]>("/api/profile/get-total-users")
   return data;
 };

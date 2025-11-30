@@ -1,24 +1,20 @@
-import { supabase } from "@/lib/supabase/client";
+import api from "@/lib/api/client";
+import type { Product } from "@/types/product";
+import type { OrderItems } from "@/types/order-items";
 
-export const getMyProducts = async (sellerId: string) => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("seller_id", sellerId)
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
+export const getMyProducts = async (sellerId: string): Promise<Product[]> => {
+  const data = await api.post<Product[]>(
+    "/api/seller/get-my-products",
+    { sellerId }
+  );
   return data;
 };
 
-export const getSellingHistory = async (sellerId: string) => {
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*, products(title, price)")
-    .eq("seller_id", sellerId)
-    .order("created_at", { ascending: false });
-
-  if (error) throw new Error(error.message);
+export const getSellingHistory = async (sellerId: string): Promise<OrderItems[]> => {
+  const data = await api.post<OrderItems[]>(
+    "/api/seller/get-selling-history",
+    { sellerId }
+  );
   return data;
 };
 

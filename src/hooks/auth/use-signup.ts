@@ -10,15 +10,16 @@ type SignUpPayload = {
   email: string;
   password: string;
   role: "customer" | "seller";
+  sellerCode?: string;
 };
 
 const useSignUp = () => {
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: async ({ name, email, password, role }: SignUpPayload) => {
+    mutationFn: async ({ name, email, password, role, sellerCode }: SignUpPayload) => {
       const { user } = await signUpWithEmail(email, password);
       if (!user) throw new Error("Failed to sign up");
-      await createUserProfile({ id: user.id, name, email, role });
+      await createUserProfile({ id: user.id, name, email, role, sellerCode });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TOTAL_USERS] });

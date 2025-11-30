@@ -1,8 +1,6 @@
 import { useState } from "react";
 import useSignUp from "@/hooks/auth/use-signup";
 
-const SELLER_SECRET = import.meta.env.VITE_SELLER_SECRET;
-
 const SignupForm = () => {
   const [form, setForm] = useState({
     name: "",
@@ -47,8 +45,8 @@ const SignupForm = () => {
       newErrors.address = "ADDRESS IS REQUIRED";
     }
 
-    if (form.role === "seller" && form.sellerCode !== SELLER_SECRET) {
-      newErrors.sellerCode = "INVALID SELLER CODE";
+    if (form.role === "seller" && !form.sellerCode) {
+      newErrors.sellerCode = "SELLER CODE IS REQUIRED";
     }
 
     if (!form.role) {
@@ -71,10 +69,13 @@ const SignupForm = () => {
     if (!validateForm()) {
       return;
     }
-    const isSeller = form.role === "seller";
-    const approvedSeller = !isSeller || (isSeller && form.sellerCode === SELLER_SECRET);
-    const finalRole = approvedSeller ? form.role : "customer";
-    mutate({ ...form, role: finalRole as "customer" | "seller" });
+    mutate({ 
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      role: form.role,
+      sellerCode: form.role === "seller" ? form.sellerCode : undefined
+    });
   };
 
   return (
@@ -159,14 +160,17 @@ const SignupForm = () => {
             </select>
 
             {form.role === "seller" && (
-              <input
-                name="sellerCode"
-                value={form.sellerCode}
-                onChange={handleChange}
-                placeholder="SELLER SECRET CODE"
-                type="password"
-                className="w-full p-4 border-4 border-black bg-red-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-red-300"
-              />
+              <div>
+                <input
+                  name="sellerCode"
+                  value={form.sellerCode}
+                  onChange={handleChange}
+                  placeholder="SELLER SECRET CODE"
+                  type="password"
+                  className={`w-full p-4 border-4 border-black bg-red-200 text-black font-bold placeholder-black text-lg focus:outline-none focus:bg-red-300 ${errors.sellerCode ? 'bg-red-300' : ''}`}
+                />
+                {errors.sellerCode && <p className="text-red-600 font-bold mt-2 text-sm">{errors.sellerCode}</p>}
+              </div>
             )}
 
             <button

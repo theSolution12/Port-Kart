@@ -1,30 +1,28 @@
-import { supabase } from "@/lib/supabase/client";
+import api, { saveSessionTokens, clearSessionTokens } from "@/lib/api/client";
 
 export const signUpWithEmail = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-  if (error) throw error;
-  return data;
+  return api.post<{ user: { id: string; email?: string } }>(
+    "/api/auth/signup", 
+    { email, password }, 
+    { requireAuth: false }
+  );
 };
 
 export const loginWithEmail = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  if (error) throw error;
+  const data = await api.post<{ session?: { access_token?: string; refresh_token?: string } }>(
+    "/api/auth/login",
+    { email, password },
+    { requireAuth: false }
+  );
+  saveSessionTokens(data?.session);
   return data;
 };
 
-export const getCurrentUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error) throw error;
-  return data.user;
+export const getCurrentUser = async (): Promise<{ id: string; email?: string }> => {
+  return api.get<{ id: string; email?: string }>("/api/auth/me");
 };
 
 export const logout = async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  await api.post("/api/auth/logout", undefined, { requireAuth: false });
+  clearSessionTokens();
 };

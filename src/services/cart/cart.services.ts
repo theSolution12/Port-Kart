@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase/client";
+import api from "@/lib/api/client";
+import type { CartItem } from "@/types/cart-items";
 
   // Add item or increment quantity
   export const addToCart = async ({
@@ -8,26 +9,21 @@ import { supabase } from "@/lib/supabase/client";
     userId: string;
     productId: string;
   }) => {
-    const { data, error } = await supabase.rpc("add_to_cart", {
-      uid: userId,
-      pid: productId,
-    });
-  
-    if (error) throw new Error(error.message);
+    const data = await api.post(
+      "/api/cart/add-to-cart",
+      { userId, productId },
+    )
     return data;
   };
   
   
   
   // Fetch current cart
-  export const getCartItems = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("cart_items")
-      .select("*, product: products(title, price)")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-  
-    if (error) throw new Error(error.message);
+  export const getCartItems = async (userId: string): Promise<CartItem[]> => {
+    const data = await api.post<CartItem[]>(
+      "/api/cart/get-cart-items",
+      { userId }
+    )
     return data;
   };
   
@@ -43,13 +39,10 @@ import { supabase } from "@/lib/supabase/client";
     productId: string;
     quantity: number;
   }) => {
-    const { data, error } = await supabase.rpc("update_cart_quantity", {
-      uid: userId,
-      pid: productId,
-      qty: quantity,
-    });
-  
-    if (error) throw new Error(error.message);
+    const data = await api.post(
+      "/api/cart/update-cart-quantity",
+      { userId, productId, quantity }
+    )
     return data;
   };
   
@@ -64,13 +57,10 @@ import { supabase } from "@/lib/supabase/client";
     userId: string;
     productId: string;
   }) => {
-    const { data, error } = await supabase.rpc("remove_from_cart", {
-      uid: userId,
-      pid: productId,
-    });
-    
-  
-    if (error) throw new Error(error.message);
+    const data = await api.post(
+      "/api/cart/remove-from-cart",
+      { userId, productId }
+    )
     return data;
   };
   

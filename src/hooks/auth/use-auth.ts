@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser, getUserProfile } from "@/services/auth/profile.services";
+import { getCurrentUser } from "@/services/auth/auth.services";
+import { getUserProfile } from "@/services/auth/profile.services";
 import { QUERY_KEYS } from "@/utils/constants";
 
 export const useAuth = () => {
@@ -9,6 +10,7 @@ export const useAuth = () => {
   const { data: user, isLoading: userLoading } = useQuery({
     queryKey: [CURRENT_USER],
     queryFn: getCurrentUser,
+    retry: false,
   });
 
   const userId = user?.id;
