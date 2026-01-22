@@ -19,9 +19,9 @@ RUN npm install --omit=dev
 COPY --from=builder /app/dist ./dist
 
 # Tell Docker what port the app listens on (documentation + tooling)
-EXPOSE 5173
+EXPOSE 3000
 
 # Ensure PORT is defined (optional but good)
-ENV PORT=5173
+ENV PORT=3000
 
 CMD ["npm", "start"]
